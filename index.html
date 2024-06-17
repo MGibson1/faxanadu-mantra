@@ -1,0 +1,255 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Faxanadu Guru</title>
+  </head>
+
+  <body>
+    <h1>Faxanadu Guru</h1>
+
+      <div id="form">
+      </div>
+      <button onclick="encode()">Mantra</button>
+      <div id="result"></div>
+  </body>
+</html>
+<script>
+  const towns = {
+    0: "0",
+    1: "1",
+    2: "2",
+    3: "3",
+    4: "4",
+    5: "5",
+    6: "6",
+    7: "7",
+  };
+
+  const titles = {
+    0: "Novice",
+    1: "Aspirant",
+    2: "Battler",
+    3: "Fighter",
+    4: "Adept",
+    5: "Chevalier",
+    6: "Veteran",
+    7: "Warrior",
+    8: "Swordsman",
+    9: "Hero",
+    10: "Soldier",
+    11: "Myrmidon",
+    12: "Champion",
+    13: "Superhero",
+    14: "Paladin",
+    15: "Lord",
+  };
+
+  const weapons = {
+    0: "Hand Dagger",
+    1: "Long Sword",
+    2: "Giant Blade",
+    3: "Dragon Slayer",
+  };
+
+  const armors = {
+    0: "Leather Armor",
+    1: "Studded Mail",
+    2: "Full Plate",
+    3: "Battle Suit",
+  };
+
+  const shields = {
+    0: "Small Shield",
+    1: "Large Shield",
+    2: "Magic Shield",
+    3: "Battle Helmet",
+  };
+
+  const magics = {
+    0: "Fire",
+    1: "Ice",
+    2: "Thunder",
+    3: "Death",
+    4: "Tilte",
+  };
+
+  const modifiers = {
+    0: "Ring of Elf",
+    1: "Ruby Ring",
+    2: "Ring of Dworf",
+    3: "Demons Ring",
+    10: "Magical Rod",
+    18: "Elixir",
+    19: "Pendant",
+    20: "Black Onix",
+  }
+
+  const slottable_items = {
+    4: "Ace Key",
+    5: "King Key",
+    6: "Queen Key",
+    7: "Jack Key",
+    8: "Joker Key",
+    9: "Mattock",
+    13: "Hour Glass",
+    15: "Wing Boots",
+    16: "Red Potion",
+  }
+
+  const items = {
+    0: "Ring of Elf",
+    1: "Ruby Ring",
+    2: "Ring of Dworf",
+    3: "Demons Ring",
+    4: "Ace Key",
+    5: "King Key",
+    6: "Queen Key",
+    7: "Jack Key",
+    8: "Joker Key",
+    9: "Mattock",
+    10: "Rod",
+    11: "Crystal",
+    12: "Lamp",
+    13: "Hour Glass",
+    14: "Book",
+    15: "Wing Boots",
+    16: "Red Potion",
+    17: "Black Potion",
+    18: "Elixir",
+    19: "Pendant",
+    20: "Black Onix",
+    21: "Fire Crystal",
+  };
+
+
+  const events = {
+    0: "ev0",
+    1: "ev1",
+    2: "Pushed Rock",
+    3: "Killed Dworf (T)",
+    4: "Killed Rock Vaulter",
+    5: "Third Spring",
+  };
+
+  function populate() {
+    console.log("populating form");
+    const body = document.getElementById("form");
+
+    body.appendChild(makeSelect("town", towns));
+    body.appendChild(makeSelect("title", titles));
+    body.appendChild(makeRadios("power ups acquired", modifiers));
+    body.appendChild(makeCheckboxes("feats accomplished", events));
+    body.appendChild(makeRadios("equipped weapon", weapons));
+    body.appendChild(makeRadios("equipped armor", armors));
+    body.appendChild(makeRadios("equipped shield", shields));
+    body.appendChild(makeRadios("equipped magic", magics));
+    body.appendChild(makeSelect("readied item", slottable_items, {allow_empty: true}));
+    body.appendChild(makeCheckboxes("unequipped weapons", weapons));
+    body.appendChild(makeCheckboxes("unequipped armors", armors));
+    body.appendChild(makeCheckboxes("unequipped shields", shields));
+    body.appendChild(makeCheckboxes("unequipped magics", magics));
+
+    for (var i = 0; i < 8; i++) {
+      body.appendChild(makeSelect(`unequipped item ${i}`, items, {allow_empty: true}));
+    }
+  }
+
+  function makeSelect(label, choices, options = {allow_empty: false}) {
+    const div = document.createElement("div");
+    div.id = `${label}_div`;
+
+
+    const labelElement = document.createElement("label");
+    labelElement.for = label;
+    labelElement.innerText = label;
+    div.appendChild(labelElement);
+
+    const select = document.createElement("select");
+    select.name = label;
+    select.id = label;
+    div.appendChild(select);
+
+
+    for (const [key, value] of Object.entries(choices)) {
+      const option = document.createElement("option");
+      option.value = key;
+      option.text = value;
+      select.appendChild(option);
+    }
+
+    if (options?.allow_empty) {
+      const option = document.createElement("option");
+      option.value = "";
+      option.text = "";
+      select.appendChild(option);
+    }
+
+    return div;
+  }
+
+  function makeRadios(label, options) {
+    const div = document.createElement("div");
+    div.id = `${label}_div`;
+
+    const titleElement = document.createElement("span");
+    titleElement.innerText = label;
+    div.appendChild(titleElement);
+
+    for (const [key, value] of Object.entries(options)) {
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = value;
+      input.value = key;
+      input.id = `${label}_${key}`;
+
+      const entryLabel = document.createElement("label");
+      entryLabel.for = input.id;
+      entryLabel.innerText = value;
+
+      div.appendChild(input);
+      div.appendChild(entryLabel);
+    }
+
+    return div;
+  }
+
+  function makeCheckboxes(label, options) {
+    const div = document.createElement("div");
+    div.id = label;
+
+    const titleElement = document.createElement("span");
+    titleElement.innerText = label;
+    div.appendChild(titleElement);
+
+    for (const [key, value] of Object.entries(options)) {
+      const input = document.createElement("input");
+      input.type = "checkbox";
+      input.name = value;
+      input.value = key;
+      input.id = `${label}_${key}`;
+
+      const entryLabel = document.createElement("label");
+      entryLabel.for = input.id;
+      entryLabel.innerText = value;
+
+      div.appendChild(input);
+      div.appendChild(entryLabel);
+    }
+
+    return div;
+  }
+
+  function encode() {
+
+
+    result("test");
+  }
+
+  function result(value) {
+    const output = document.getElementById("result");
+    output.innerText = value;
+  }
+
+  console.log("populating document");
+  populate();
+</script>
